@@ -8,8 +8,8 @@ class Map:
             y = 0
             for line in file:
                 l = []
-                for x in range(0, len(line)):
-                    l.append(Cell(self, line[x], Position(x, y)))
+                for x, ch in enumerate(line):
+                    l.append(Cell(self, ch, Position(x, y)))
                 self.field.append(l)
                 y += 1
 
@@ -36,7 +36,3 @@ class Position:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-
-
-map = Map('static/maps/m1.txt')
-print(map)
