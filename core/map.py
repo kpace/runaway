@@ -1,4 +1,6 @@
 class Map:
+    PASSABLE = {' ', '.'}
+
     def __init__(self, file_name):
         self.__load_map(file_name)
 
@@ -6,10 +8,11 @@ class Map:
         self.field = []
         with open(file_name) as file:
             y = 0
-            for line in file:
+            for line in file: # can be refactored with list comprehention
                 l = []
                 for x, ch in enumerate(line):
-                    l.append(Cell(self, ch, Position(x, y)))
+                    is_passable = ch in self.PASSABLE
+                    l.append(Cell(is_passable, ch, (x, y)))
                 self.field.append(l)
                 y += 1
 
@@ -21,10 +24,13 @@ class Map:
 
         return s
 
+    def __getitem__(self, position):
+        return self.field[position[1]][position[0]]
+
 
 class Cell:
-    def __init__(self, map, symbol, position):
-        self.map = map
+    def __init__(self, is_passable, symbol, position):
+        self.is_passable = is_passable
         self.symbol = symbol
         self.position = position
 
@@ -32,7 +38,5 @@ class Cell:
         return self.symbol
 
 
-class Position:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+map = Map("../static/maps/m1.txt")
+print(map[(1, 1)].is_passable)
