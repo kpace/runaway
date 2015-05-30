@@ -8,11 +8,14 @@ class Map:
         self.field = []
         with open(file_name) as file:
             y = 0
-            for line in file: # can be refactored with list comprehention
+            for line in file:  # can be refactored with list comprehension
                 l = []
                 for x, ch in enumerate(line):
                     is_passable = ch in self.PASSABLE
-                    l.append(Cell(is_passable, ch, (x, y)))
+                    if ch == 'H':
+                        l.append(Hero((x, y)))
+                    else:
+                        l.append(Cell(is_passable, ch, (x, y)))
                 self.field.append(l)
                 y += 1
 
@@ -29,8 +32,8 @@ class Map:
 
 
 class Cell:
-    def __init__(self, is_passable, symbol, position):
-        self.is_passable = is_passable
+    def __init__(self, passable, symbol, position):
+        self.passable = passable
         self.symbol = symbol
         self.position = position
 
@@ -38,5 +41,10 @@ class Cell:
         return self.symbol
 
 
-map = Map("../static/maps/m1.txt")
-print(map[(1, 1)].is_passable)
+class Hero(Cell):
+    def __init__(self, position, lives=3):
+        super().__init__(False, 'H', position)
+        self.lives = lives
+
+m = Map('../static/maps/m1.txt')
+print(m)
