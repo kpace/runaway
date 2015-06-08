@@ -1,3 +1,5 @@
+# Runaway
+
 PacMan-like игра имплементирана на Python за курса "Програмиране с Python" във
 ФМИ.
 
