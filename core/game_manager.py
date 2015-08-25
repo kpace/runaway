@@ -1,4 +1,4 @@
-from map import Position
+from cells import Position
 import os
 
 DIRECTIONS = {
@@ -15,14 +15,15 @@ class GameManager:
         self.hero = map.get_hero()
 
     def move_hero(self, direction):
-        pos = self.hero.position + DIRECTIONS[direction]
-        to_move = self.map[pos]
+        to_move_pos = self.hero.position + direction
+        to_move = self.map[to_move_pos]
 
         if to_move and to_move.passable:
-            self.map[pos] = self.hero
+            self.map[to_move_pos] = self.hero
             to_move.position = self.hero.position
-            self.map[to_move.position] = to_move
-            self.hero.position = pos
+            self.map[self.hero.position] = to_move
+            self.hero.position = to_move_pos
+            return True
 
     def movement(self):
         while True:
@@ -30,4 +31,3 @@ class GameManager:
             direction = input()
             self.move_hero(direction)
             os.system('clear')
-
