@@ -1,5 +1,5 @@
-from cells import Position
-import os
+from cells import Position, Hero
+
 
 DIRECTIONS = {
     'l': Position(-1, 0),
@@ -12,7 +12,7 @@ DIRECTIONS = {
 class GameManager:
     def __init__(self, map):
         self.map = map
-        self.hero = map.get_hero()
+        self.hero = self.get_hero()
 
     def move_hero(self, direction):
         to_move_pos = self.hero.position + direction
@@ -25,9 +25,15 @@ class GameManager:
             self.hero.position = to_move_pos
             return True
 
-    def movement(self):
-        while True:
-            print(self.map)
-            direction = input()
-            self.move_hero(direction)
-            os.system('clear')
+    def get_hero(self):
+        for i in range(self.map.height):
+            for j in range(self.map.width):
+                x = self.map[Position(i, j)]
+                if type(x) is Hero:
+                    return x
+
+    def dimensions(self):
+        return self.map.height, self.map.width
+
+    def symbol_at(self, position):
+        return self.map[position].symbol

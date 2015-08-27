@@ -46,8 +46,3 @@ class Map:
         if i in range(0, self.height) and j in range(0, self.width):
             self.field[i][j] = value
 
-    def get_hero(self):
-        for line in self.field:
-            for x in line:
-                if type(x) is Hero:
-                    return x

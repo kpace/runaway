@@ -3,7 +3,6 @@ from PyQt4 import QtGui, QtCore
 from map import Map
 from cells import Position
 from game_manager import GameManager
-import timeit
 
 DIRECTIONS = {
     QtCore.Qt.Key_A: Position(0, -1),
@@ -15,9 +14,9 @@ DIRECTIONS = {
 SPEED = 100
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self, map):
+    def __init__(self, gm):
         super(MainWindow, self).__init__()
-        self.board = Board(map)
+        self.board = Board(gm)
         self.setCentralWidget(self.board)
         self.board.start()
         self.show()
@@ -28,14 +27,14 @@ class MainWindow(QtGui.QMainWindow):
 
 class Board(QtGui.QFrame):
 
-    def __init__(self, map):
+    def __init__(self, gm):
         super(Board, self).__init__()
 
-        self.map = map
-        self.hero_position = map.get_hero().position
+        self.gm = gm
+        self.hero_position = self.gm.get_hero().position
+        self.height, self.width = gm.dimensions()
         self.direction = DIRECTIONS[QtCore.Qt.Key_D]
         self.timer = QtCore.QBasicTimer()
-        self.gm = GameManager(self.map)
         self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(0)
         self.init_ui()
@@ -49,28 +48,27 @@ class Board(QtGui.QFrame):
         self.show()
 
     def draw(self):
-        for i in range(self.map.height):
-            for j in range(self.map.width):
+        for i in range(self.height):
+            for j in range(self.width):
                 position_obj = Position(i, j)
-                button = QtGui.QPushButton(self.map[position_obj].symbol)
-                button.setMaximumSize(30, 30)
-                button.setMinimumSize(30, 30)
-                # button.setFlat(True)
+                button = QtGui.QPushButton(self.gm.symbol_at(position_obj))
+                button.setMaximumSize(10, 10)
+                button.setMinimumSize(10, 10)
+                button.setFlat(True)
                 self.grid.addWidget(button, i, j)
 
     def draw_symbols(self):
-        for i in range(self.map.height):
-            for j in range(self.map.width):
+        for i in range(self.height):
+            for j in range(self.width):
                 position_obj = Position(i, j)
                 button = self.grid.itemAtPosition(i, j).widget()
-                button.setText(self.map[position_obj].symbol)
+                button.setText(self.gm.symbol_at(position_obj))
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
             self.direction = DIRECTIONS.get(event.key(), self.direction)
 
     def timerEvent(self, event):
-        t1 = timeit.default_timer()
         if event.timerId() == self.timer.timerId():
             self.move_hero(self.direction)
             self.draw_symbols()
@@ -101,8 +99,9 @@ class Board(QtGui.QFrame):
 
 def main():
     m = Map('../maps/m2.txt')
+    gm = GameManager(m)
     app = QtGui.QApplication(sys.argv)
-    mn = MainWindow(m)
+    mn = MainWindow(gm)
     sys.exit(app.exec_())
 
 
