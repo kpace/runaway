@@ -1,4 +1,4 @@
-from cells import Cell, Hero, Position
+from cells import Cell, Hero
 
 
 class Map:
@@ -17,9 +17,9 @@ class Map:
                     is_passable = ch in self.PASSABLE
                     if ch == 'H':
                         l.append(
-                            Hero(Position(i, j)))
+                            Hero())
                     else:
-                        l.append(Cell(is_passable, ch, Position(i, j)))
+                        l.append(Cell(is_passable, ch))
                 self.field.append(l)
                 i += 1
         self.height = len(self.field)
@@ -35,14 +35,14 @@ class Map:
         return s
 
     def __getitem__(self, position):
-        i = position.i
-        j = position.j
+        i = position[0]
+        j = position[1]
         if i in range(0, self.height) and j in range(0, self.width):
             return self.field[i][j]
 
     def __setitem__(self, position, value):
-        i = position.i
-        j = position.j
+        i = position[0]
+        j = position[1]
         if i in range(0, self.height) and j in range(0, self.width):
             self.field[i][j] = value
 
