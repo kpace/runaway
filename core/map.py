@@ -35,14 +35,8 @@ class Map:
         return s
 
     def __getitem__(self, position):
-        i = position[0]
-        j = position[1]
-        if i in range(0, self.height) and j in range(0, self.width):
-            return self.field[i][j]
+            return self.field[position[0]][position[1]]
 
     def __setitem__(self, position, value):
-        i = position[0]
-        j = position[1]
-        if i in range(0, self.height) and j in range(0, self.width):
-            self.field[i][j] = value
+        self.field[position[0]][position[1]] = value
 
