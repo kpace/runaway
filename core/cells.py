@@ -1,32 +1,15 @@
 class Cell:
-    def __init__(self, passable=True, symbol=' '):
+    def __init__(self, x, y, passable=True, symbol=' '):
+        self.x = x
+        self.y = y
         self.passable = passable
         self.symbol = symbol
 
     def __str__(self):
         return self.symbol
 
-
 class Hero(Cell):
-    def __init__(self, lives=3):
-        super().__init__(False, 'H')
+    def __init__(self, x, y, lives=3):
+        super().__init__(x, y, False, 'H')
         self.lives = lives
 
-
-# class Position:
-#     def __init__(self, i, j):
-#         self.i = i
-#         self.j = j
-#
-#     def __add__(self, other):
-#         i = self.i + other.i
-#         j = self.j + other.j
-#
-#         return Position(i, j)
-#
-#     def __iadd__(self, other):
-#         """ equivalent to += """
-#         self.i += other.i
-#         self.j += other.j
-#
-#         return self

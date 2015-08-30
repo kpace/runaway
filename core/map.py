@@ -17,9 +17,9 @@ class Map:
                     is_passable = ch in self.PASSABLE
                     if ch == 'H':
                         l.append(
-                            Hero())
+                            Hero(j, i))
                     else:
-                        l.append(Cell(is_passable, ch))
+                        l.append(Cell(j, i, is_passable, ch))
                 self.field.append(l)
                 i += 1
         self.height = len(self.field)
@@ -35,8 +35,21 @@ class Map:
         return s
 
     def __getitem__(self, position):
-            return self.field[position[0]][position[1]]
+        return self.field[position[0]][position[1]]
 
     def __setitem__(self, position, value):
         self.field[position[0]][position[1]] = value
 
+    def neighbours(self, cell):
+        # TODO: think about refactoring this
+        neighbours = []
+
+        neighbours.append(self.field[cell.y + 1][cell.x])
+        neighbours.append(self.field[cell.y - 1][cell.x])
+        neighbours.append(self.field[cell.y][cell.x + 1])
+        neighbours.append(self.field[cell.y][cell.x - 1])
+
+        return neighbours
+
+    def dist_between(self, cell1, cell2):
+        return abs(cell1.y - cell2.y) + abs((cell1.x - cell2.x))

@@ -1,4 +1,6 @@
 from cells import Hero
+import sys
+import heapq
 
 class GameManager:
     def __init__(self, map):
@@ -12,9 +14,10 @@ class GameManager:
 
         if to_move and to_move.passable:
             self.map[to_move_pos] = self.hero
-            to_move.position = self.hero_position
+            to_move.y, to_move.x = self.hero_position
             self.map[self.hero_position] = to_move
             self.hero_position = to_move_pos
+            self.hero.y, self.hero.x = to_move_pos
             return True
 
         return False
@@ -40,3 +43,51 @@ class GameManager:
 
     def symbol_at(self, position):
         return self.map[position].symbol
+
+    def a_star(self, start, goal):
+        g_score = {
+            start: 0
+        }
+
+        f_score = {
+            start: g_score[start] + self.heuristic_cost(start, goal)
+        }
+
+        came_from = {}
+        open = []
+        closed = set()
+
+        heapq.heappush(open, (f_score[start], start))  # add start to open
+
+        while open:
+            current = heapq.heappop(open)[0]
+            closed.add(current)
+
+            if current is goal:
+                return self.reconstruct_path(came_from, goal) # path has been found
+
+            for n in self.map.neighbours(current):
+                if not n.passable and n in closed:
+                    continue
+
+                tentative = g_score[current] + self.map.dist_between(current, n)
+
+                if n not in open \
+                        or tentative < g_score.get(n, sys.maxsize):
+
+                    came_from[n] = current
+                    g_score[n] = tentative
+                    f_score[n] = g_score[n] + self.heuristic_cost(n, goal)
+                    if n not in open:
+                        heapq.heappush(open, (f_score[n], n))
+
+
+    def heuristic_cost(self, start, goal):
+        return self.map.dist_between(start, goal)
+
+    def reconstruct_path(self, came_from, current):
+        path = [current]
+        while current:
+            current = came_from.get(current, False)
+            path.append(current)
+        return path
