@@ -1,4 +1,4 @@
-from cells import Hero
+from cells import Hero, Monster
 import sys
 import heapq
 
@@ -6,7 +6,18 @@ class GameManager:
     def __init__(self, map):
         self.map = map
         self.hero = self.get_hero()
+        self.monster = self.get_monster()
         self.hero_position = self.get_hero_position()
+
+    def move_cells(self, direction):
+        self.move_hero(direction)
+        to_move = self.a_star(self.monster, self.hero)
+        to_move = to_move[len(to_move) - 2]
+        self.move_cell(self.monster, to_move)
+
+    def move_cell(self, cell, to):
+        if to.passable:
+            self.map.swap_cells(cell, to)
 
     def move_hero(self, direction):
         to_move_pos = tuple(map(sum, zip(self.hero_position, direction)))
@@ -38,6 +49,14 @@ class GameManager:
                 if type(x) is Hero:
                     return i, j
 
+    def get_monster(self):
+        #TODO: think about refactoring this
+        for i in range(self.map.height):
+            for j in range(self.map.width):
+                x = self.map[(i, j)]
+                if type(x) is Monster:
+                    return x
+
     def dimensions(self):
         return self.map.height, self.map.width
 
@@ -60,14 +79,14 @@ class GameManager:
         heapq.heappush(open, (f_score[start], start))  # add start to open
 
         while open:
-            current = heapq.heappop(open)[0]
+            current = heapq.heappop(open)[1]
             closed.add(current)
 
             if current is goal:
                 return self.reconstruct_path(came_from, goal) # path has been found
 
             for n in self.map.neighbours(current):
-                if not n.passable and n in closed:
+                if not n.passable or n in closed:
                     continue
 
                 tentative = g_score[current] + self.map.dist_between(current, n)
@@ -81,7 +100,6 @@ class GameManager:
                     if n not in open:
                         heapq.heappush(open, (f_score[n], n))
 
-
     def heuristic_cost(self, start, goal):
         return self.map.dist_between(start, goal)
 
@@ -89,5 +107,6 @@ class GameManager:
         path = [current]
         while current:
             current = came_from.get(current, False)
-            path.append(current)
+            if current:
+                path.append(current)
         return path

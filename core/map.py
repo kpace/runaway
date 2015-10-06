@@ -1,4 +1,4 @@
-from cells import Cell, Hero
+from cells import Cell, Hero, Monster
 
 
 class Map:
@@ -16,8 +16,9 @@ class Map:
                 for j, ch in enumerate(line[:-1]):
                     is_passable = ch in self.PASSABLE
                     if ch == 'H':
-                        l.append(
-                            Hero(j, i))
+                        l.append(Hero(j, i))
+                    elif ch == '$':
+                        l.append(Monster(j, i))
                     else:
                         l.append(Cell(j, i, is_passable, ch))
                 self.field.append(l)
@@ -53,3 +54,16 @@ class Map:
 
     def dist_between(self, cell1, cell2):
         return abs(cell1.y - cell2.y) + abs((cell1.x - cell2.x))
+
+    def swap_cells(self, c1, c2):
+        c1_pos = c1.y, c1.x
+        c2_pos = c2.y, c2.x
+
+        tmp = c1
+        self[c1_pos] = c2
+        self[c2_pos] = tmp
+
+        c1.y, c1.x = c2_pos
+        c2.y, c2.x = c1_pos
+
+

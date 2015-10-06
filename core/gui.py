@@ -10,7 +10,7 @@ DIRECTIONS = {
     QtCore.Qt.Key_S: (1, 0)
 }
 
-SPEED = 50
+SPEED = 200
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, gm):
@@ -66,19 +66,16 @@ class Playground(QtGui.QFrame):
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
-            if self.move_hero(self.direction):
-                self.update_playground()
+            self.gm.move_cells(self.direction)
+            self.update_playground()
         else:
             QtGui.QWidget.timerEvent(event)
-
-    def move_hero(self, position):
-        return self.gm.move_hero(position)
 
     def start(self):
         self.timer.start(SPEED, self)
 
 def main():
-    m = Map('../maps/m2-o.txt')
+    m = Map('../maps/m2.txt')
     gm = GameManager(m)
     app = QtGui.QApplication(sys.argv)
     mn = MainWindow(gm)
