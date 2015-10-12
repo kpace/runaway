@@ -1,5 +1,6 @@
 import sys
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QMessageBox
 from map import Map
 from game_manager import GameManager
 
@@ -11,18 +12,6 @@ DIRECTIONS = {
 }
 
 SPEED = 200
-
-class MainWindow(QtGui.QMainWindow):
-    def __init__(self, gm):
-        super(MainWindow, self).__init__()
-        self.board = Playground(gm)
-        self.setCentralWidget(self.board)
-        self.board.start()
-        self.show()
-
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Escape:
-            self.close()
 
 class Playground(QtGui.QFrame):
 
@@ -49,8 +38,9 @@ class Playground(QtGui.QFrame):
         for i in range(self.height):
             for j in range(self.width):
                 button = QtGui.QPushButton(self.gm.symbol_at((i, j)))
-                button.setMaximumSize(25, 25)
-                button.setMinimumSize(25, 25)
+                # button.setMaximumSize(25, 25)
+                # button.setMinimumSize(25, 25)
+                button.setFixedSize(20, 20)
                 button.setFlat(True)
                 self.grid.addWidget(button, i, j)
 
@@ -63,10 +53,15 @@ class Playground(QtGui.QFrame):
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
             self.direction = DIRECTIONS.get(event.key(), self.direction)
+        elif event.key() == QtCore.Qt.Key_Escape:
+            self.close()
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
             self.gm.move_cells(self.direction)
+            if self.gm.game_over:
+                    QMessageBox.information(self, 'Game Over', ':( :( :(')
+                    sys.exit()
             self.update_playground()
         else:
             QtGui.QWidget.timerEvent(event)
@@ -75,10 +70,12 @@ class Playground(QtGui.QFrame):
         self.timer.start(SPEED, self)
 
 def main():
-    m = Map('../maps/m2.txt')
+    m = Map('../maps/m2-o.txt')
     gm = GameManager(m)
     app = QtGui.QApplication(sys.argv)
-    mn = MainWindow(gm)
+    playground = Playground(gm)
+    playground.start()
+
     sys.exit(app.exec_())
 
 

@@ -4,6 +4,7 @@ import heapq
 
 class GameManager:
     def __init__(self, map):
+        self.game_over = False
         self.map = map
         self.hero = self.get_hero()
         self.monster = self.get_monster()
@@ -13,6 +14,8 @@ class GameManager:
         self.move_hero(direction)
         to_move = self.a_star(self.monster, self.hero)
         to_move = to_move[len(to_move) - 2]
+        if to_move == self.hero:
+            self.game_over = True
         self.move_cell(self.monster, to_move)
 
     def move_cell(self, cell, to):
