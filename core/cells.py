@@ -20,5 +20,7 @@ class Hero(Cell):
 class Monster(Cell):
     def __init__(self, x, y):
         super().__init__(x, y, False, '$')
+        self.path = []
+
 
 

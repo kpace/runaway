@@ -38,8 +38,6 @@ class Playground(QtGui.QFrame):
         for i in range(self.height):
             for j in range(self.width):
                 button = QtGui.QPushButton(self.gm.symbol_at((i, j)))
-                # button.setMaximumSize(25, 25)
-                # button.setMinimumSize(25, 25)
                 button.setFixedSize(20, 20)
                 button.setFlat(True)
                 self.grid.addWidget(button, i, j)

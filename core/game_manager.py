@@ -11,9 +11,10 @@ class GameManager:
         self.hero_position = self.get_hero_position()
 
     def move_cells(self, direction):
-        self.move_hero(direction)
-        to_move = self.a_star(self.monster, self.hero)
-        to_move = to_move[len(to_move) - 2]
+        if self.move_hero(direction):
+            self.monster.path = self.a_star(self.monster, self.hero)
+
+        to_move = self.monster.path.pop()
         if to_move == self.hero:
             self.game_over = True
         self.move_cell(self.monster, to_move)
@@ -24,12 +25,12 @@ class GameManager:
 
     def move_hero(self, direction):
         to_move_pos = tuple(map(sum, zip(self.hero_position, direction)))
-        to_move = self.map[to_move_pos]
+        to_move_cell = self.map[to_move_pos]
 
-        if to_move and to_move.passable:
+        if to_move_cell and to_move_cell.passable:
             self.map[to_move_pos] = self.hero
-            to_move.y, to_move.x = self.hero_position
-            self.map[self.hero_position] = to_move
+            to_move_cell.y, to_move_cell.x = self.hero_position
+            self.map[self.hero_position] = to_move_cell
             self.hero_position = to_move_pos
             self.hero.y, self.hero.x = to_move_pos
             return True
@@ -37,7 +38,7 @@ class GameManager:
         return False
 
     def get_hero(self):
-        #TODO: think about refactoring this
+        # TODO: think about refactoring this
         for i in range(self.map.height):
             for j in range(self.map.width):
                 x = self.map[(i, j)]
@@ -45,7 +46,7 @@ class GameManager:
                     return x
 
     def get_hero_position(self):
-        #TODO: think about refactoring this
+        # TODO: think about refactoring this
         for i in range(self.map.height):
             for j in range(self.map.width):
                 x = self.map[(i, j)]
@@ -53,7 +54,7 @@ class GameManager:
                     return i, j
 
     def get_monster(self):
-        #TODO: think about refactoring this
+        # TODO: think about refactoring this
         for i in range(self.map.height):
             for j in range(self.map.width):
                 x = self.map[(i, j)]
@@ -82,11 +83,11 @@ class GameManager:
         heapq.heappush(open, (f_score[start], start))  # add start to open
 
         while open:
-            current = heapq.heappop(open)[1]
+            _, current = heapq.heappop(open)
             closed.add(current)
 
             if current is goal:
-                return self.reconstruct_path(came_from, goal) # path has been found
+                return self.reconstruct_path(came_from, goal)  # path has been found
 
             for n in self.map.neighbours(current):
                 if not n.passable or n in closed:
@@ -112,4 +113,4 @@ class GameManager:
             current = came_from.get(current, False)
             if current:
                 path.append(current)
-        return path
+        return path[:len(path) - 1]
