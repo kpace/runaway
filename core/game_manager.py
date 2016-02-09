@@ -7,17 +7,13 @@ class GameManager:
         self.game_over = False
         self.map = map
         self.hero = self.get_hero()
-        self.monster = self.get_monster()
+        self.monsters = self.get_monsters()
         self.hero_position = self.get_hero_position()
 
     def move_cells(self, direction):
         if self.move_hero(direction):
-            self.monster.path = self.a_star(self.monster, self.hero)
-
-        to_move = self.monster.path.pop()
-        if to_move == self.hero:
-            self.game_over = True
-        self.move_cell(self.monster, to_move)
+            self.update_monsters_path()
+        self.move_monsters()
 
     def move_cell(self, cell, to):
         if to.passable:
@@ -37,6 +33,23 @@ class GameManager:
 
         return False
 
+    def move_monsters(self):
+        for monster in self.monsters:
+            # monster.path could be empty, if a_star can't find path
+            if monster.path:
+                to_move = monster.path.pop()
+                if to_move == self.hero:  # Game Over
+                    self.game_over = True
+                    return
+                self.move_cell(monster, to_move)
+
+    def update_monsters_path(self):
+        """ Updates all monsters paths if hero position is changed.
+            Note: a_star can return empty list, if path isn't found
+        """
+        for monster in self.monsters:
+            monster.path = self.a_star(monster, self.hero)
+
     def get_hero(self):
         # TODO: think about refactoring this
         for i in range(self.map.height):
@@ -53,13 +66,18 @@ class GameManager:
                 if type(x) is Hero:
                     return i, j
 
-    def get_monster(self):
+    def get_monsters(self):
         # TODO: think about refactoring this
-        for i in range(self.map.height):
-            for j in range(self.map.width):
-                x = self.map[(i, j)]
-                if type(x) is Monster:
-                    return x
+        # monsters = []
+        # for i in range(self.map.height):
+        #     for j in range(self.map.width):
+        #         x = self.map[(i, j)]
+        #         if type(x) is Monster:
+        #             monsters.append(x)
+        #         return monsters
+
+        return [self.map[(i, j)] for i in range(self.map.height) for j in
+                range(self.map.width) if type(self.map[(i, j)]) is Monster]
 
     def dimensions(self):
         return self.map.height, self.map.width
@@ -87,10 +105,12 @@ class GameManager:
             closed.add(current)
 
             if current is goal:
-                return self.reconstruct_path(came_from, goal)  # path has been found
+                return self.reconstruct_path(came_from, goal)
 
             for n in self.map.neighbours(current):
-                if not n.passable or n in closed:
+                # if current is not passable but is Monster
+                # find path through it, because it will move in the future
+                if (not n.passable and type(n) != Monster) or n in closed:
                     continue
 
                 tentative = g_score[current] + self.map.dist_between(current, n)
@@ -103,6 +123,7 @@ class GameManager:
                     f_score[n] = g_score[n] + self.heuristic_cost(n, goal)
                     if n not in open:
                         heapq.heappush(open, (f_score[n], n))
+        return []
 
     def heuristic_cost(self, start, goal):
         return self.map.dist_between(start, goal)
