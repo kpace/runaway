@@ -110,6 +110,7 @@ class GameManager:
             for n in self.map.neighbours(current):
                 # if current is not passable but is Monster
                 # find path through it, because it will move in the future
+                # TODO: Think about better implementation
                 if (not n.passable and type(n) != Monster) or n in closed:
                     continue
 
