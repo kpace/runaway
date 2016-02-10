@@ -25,6 +25,14 @@ class Playground(QtGui.QFrame):
         self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(0)
         self.init_ui()
+        self.setStyleSheet(
+            """
+            QPushButton {
+            background-color: red;
+            border: 0;
+            }
+            """
+        )
 
     def init_ui(self):
         self.setLayout(self.grid)
