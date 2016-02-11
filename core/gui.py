@@ -11,7 +11,31 @@ DIRECTIONS = {
     QtCore.Qt.Key_S: (1, 0)
 }
 
-SPEED = 200
+SPEED = 100
+CELL_SIZE = 20
+
+class CellGui(QtGui.QLabel):
+
+    def __init__(self, symbol, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFixedSize(CELL_SIZE, CELL_SIZE)
+        self.setProperty('symbol', symbol)
+
+    def set_style(self, symbol):
+        self.setProperty('symbol', symbol)
+        self.setStyleSheet(
+            """
+            QLabel[symbol='#'] {
+                background-color: blue;
+            }
+            QLabel[symbol='H']{
+                background-color: yellow;
+            }
+            QLabel[symbol='$']{
+                background-color: red;
+            }
+            """
+        )
 
 class Playground(QtGui.QFrame):
 
@@ -25,14 +49,6 @@ class Playground(QtGui.QFrame):
         self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(0)
         self.init_ui()
-        self.setStyleSheet(
-            """
-            QPushButton {
-            background-color: red;
-            border: 0;
-            }
-            """
-        )
 
     def init_ui(self):
         self.setLayout(self.grid)
@@ -45,16 +61,15 @@ class Playground(QtGui.QFrame):
     def draw(self):
         for i in range(self.height):
             for j in range(self.width):
-                button = QtGui.QPushButton(self.gm.symbol_at((i, j)))
-                button.setFixedSize(20, 20)
-                button.setFlat(True)
-                self.grid.addWidget(button, i, j)
+                cell = CellGui(self.gm.cell_at((i, j)).symbol)
+                self.grid.addWidget(cell, i, j)
 
     def update_playground(self):
         for i in range(self.height):
             for j in range(self.width):
-                button = self.grid.itemAtPosition(i, j).widget()
-                button.setText(self.gm.symbol_at((i, j)))
+                cell = self.grid.itemAtPosition(i, j).widget()
+                # TODO: Refactor...
+                cell.set_style(self.gm.cell_at((i, j)).symbol)
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:

@@ -82,8 +82,8 @@ class GameManager:
     def dimensions(self):
         return self.map.height, self.map.width
 
-    def symbol_at(self, position):
-        return self.map[position].symbol
+    def cell_at(self, position):
+        return self.map[position]
 
     def a_star(self, start, goal):
         g_score = {
