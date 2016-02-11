@@ -39,8 +39,8 @@ class CellGui(QtGui.QLabel):
 
 class Playground(QtGui.QFrame):
 
-    def __init__(self, gm):
-        super(Playground, self).__init__()
+    def __init__(self, gm, *args, **kwargs):
+        super(Playground, self).__init__(*args, **kwargs)
 
         self.gm = gm
         self.height, self.width = gm.dimensions()
