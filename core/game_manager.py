@@ -21,9 +21,11 @@ class GameManager:
             self.map.swap_cells(cell, to)
 
     def move_hero(self):
+        # TODO: implement get_next_cell
         to_move_pos = tuple(map(sum, zip(self.hero_position, self.direction)))
         to_move_cell = self.map[to_move_pos]
 
+        # TODO: implement swap_cells
         if to_move_cell and to_move_cell.passable:
             self.map[to_move_pos] = self.hero
             to_move_cell.y, to_move_cell.x = self.hero_position
