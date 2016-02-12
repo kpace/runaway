@@ -3,15 +3,16 @@ import sys
 import heapq
 
 class GameManager:
-    def __init__(self, map):
+    def __init__(self, map, initial_direction=(0, 1)):
         self.game_over = False
         self.map = map
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
         self.hero_position = self.get_hero_position()
+        self.direction = initial_direction
 
-    def move_cells(self, direction):
-        if self.move_hero(direction):
+    def move_cells(self):
+        if self.move_hero():
             self.update_monsters_path()
         self.move_monsters()
 
@@ -19,8 +20,8 @@ class GameManager:
         if to.passable:
             self.map.swap_cells(cell, to)
 
-    def move_hero(self, direction):
-        to_move_pos = tuple(map(sum, zip(self.hero_position, direction)))
+    def move_hero(self):
+        to_move_pos = tuple(map(sum, zip(self.hero_position, self.direction)))
         to_move_cell = self.map[to_move_pos]
 
         if to_move_cell and to_move_cell.passable:
@@ -67,15 +68,6 @@ class GameManager:
                     return i, j
 
     def get_monsters(self):
-        # TODO: think about refactoring this
-        # monsters = []
-        # for i in range(self.map.height):
-        #     for j in range(self.map.width):
-        #         x = self.map[(i, j)]
-        #         if type(x) is Monster:
-        #             monsters.append(x)
-        #         return monsters
-
         return [self.map[(i, j)] for i in range(self.map.height) for j in
                 range(self.map.width) if type(self.map[(i, j)]) is Monster]
 
@@ -136,3 +128,8 @@ class GameManager:
             if current:
                 path.append(current)
         return path[:len(path) - 1]
+
+    def set_direction(self, direction):
+        to_move_pos = tuple(map(sum, zip(self.hero_position, direction)))
+        if self.map[to_move_pos].passable:
+            self.direction = direction

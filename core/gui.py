@@ -44,7 +44,6 @@ class Playground(QtGui.QFrame):
 
         self.gm = gm
         self.height, self.width = gm.dimensions()
-        self.hero_direction = DIRECTIONS[QtCore.Qt.Key_D]
         self.timer = QtCore.QBasicTimer()
         self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(0)
@@ -73,13 +72,13 @@ class Playground(QtGui.QFrame):
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
-            self.hero_direction = DIRECTIONS.get(event.key(), self.hero_direction)
+            self.gm.set_direction(DIRECTIONS.get(event.key()))
         elif event.key() == QtCore.Qt.Key_Escape:
             self.close()
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
-            self.gm.move_cells(self.hero_direction)
+            self.gm.move_cells()
             if self.gm.game_over:
                     QMessageBox.information(self, 'Game Over', ':( :( :(')
                     sys.exit()
@@ -92,7 +91,7 @@ class Playground(QtGui.QFrame):
 
 def main():
     m = Map('../maps/m2.txt')
-    gm = GameManager(m)
+    gm = GameManager(m, DIRECTIONS[QtCore.Qt.Key_D])
     app = QtGui.QApplication(sys.argv)
     playground = Playground(gm)
     playground.start()
