@@ -11,7 +11,7 @@ DIRECTIONS = {
     QtCore.Qt.Key_S: (1, 0)
 }
 
-SPEED = 100
+SPEED = 200
 CELL_SIZE = 20
 
 class CellGui(QtGui.QLabel):
@@ -29,7 +29,7 @@ class CellGui(QtGui.QLabel):
                 background-color: blue;
             }
             QLabel[symbol='H']{
-                background-color: yellow;
+                background-color: black;
             }
             QLabel[symbol='$']{
                 background-color: red;
@@ -90,7 +90,7 @@ class Playground(QtGui.QFrame):
         self.timer.start(SPEED, self)
 
 def main():
-    m = Map('../maps/m2.txt')
+    m = Map('../maps/m1.txt')
     gm = GameManager(m, DIRECTIONS[QtCore.Qt.Key_D])
     app = QtGui.QApplication(sys.argv)
     playground = Playground(gm)

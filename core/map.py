@@ -14,12 +14,12 @@ class Map:
             for line in file:  # can be refactored with list comprehension
                 l = []
                 for j, ch in enumerate(line[:-1]):
-                    is_passable = ch in self.PASSABLE
                     if ch == 'H':
                         l.append(Hero(j, i))
                     elif ch == '$':
                         l.append(Monster(j, i))
                     else:
+                        is_passable = ch in self.PASSABLE
                         l.append(Cell(j, i, is_passable, ch))
                 self.field.append(l)
                 i += 1
@@ -44,7 +44,6 @@ class Map:
     def neighbours(self, cell):
         # TODO: think about refactoring this
         neighbours = []
-
         neighbours.append(self.field[cell.y + 1][cell.x])
         neighbours.append(self.field[cell.y - 1][cell.x])
         neighbours.append(self.field[cell.y][cell.x + 1])
@@ -65,5 +64,3 @@ class Map:
 
         c1.y, c1.x = c2_pos
         c2.y, c2.x = c1_pos
-
-
