@@ -13,7 +13,7 @@ class TestMap(unittest.TestCase):
     def test_getitem_bad_index(self):
         map = Map('../maps/test-map1.txt')
         self.assertRaises(IndexError, map.__getitem__, (map.height, map.width - 1))
-        self.assertRaises(IndexError, map.__getitem__, (map.height-1 , map.width))
+        self.assertRaises(IndexError, map.__getitem__, (map.height-1, map.width))
         self.assertRaises(IndexError, map.__getitem__, (100, 100))
 
     def test_setitem(self):

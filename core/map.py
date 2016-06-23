@@ -15,12 +15,12 @@ class Map:
                 l = []
                 for j, ch in enumerate(line[:-1]):
                     if ch == 'H':
-                        l.append(Hero(j, i))
+                        l.append(Hero(i, j))
                     elif ch == '$':
-                        l.append(Monster(j, i))
+                        l.append(Monster(i, j))
                     else:
                         is_passable = ch in self.PASSABLE
-                        l.append(Cell(j, i, is_passable, ch))
+                        l.append(Cell(i, j, is_passable, ch))
                 self.field.append(l)
                 i += 1
         self.height = len(self.field)
@@ -44,9 +44,9 @@ class Map:
     def neighbours(self, cell):
         # TODO: think about refactoring this
         neighbours = []
-        neighbours.append(self.field[cell.y + 1][cell.x])
         neighbours.append(self.field[cell.y - 1][cell.x])
         neighbours.append(self.field[cell.y][cell.x + 1])
+        neighbours.append(self.field[cell.y + 1][cell.x])
         neighbours.append(self.field[cell.y][cell.x - 1])
 
         return neighbours

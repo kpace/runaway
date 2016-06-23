@@ -1,6 +1,6 @@
 from cells import Hero, Monster
 import sys
-import heapq
+import heap
 
 class GameManager:
     def __init__(self, map, initial_direction=(0, 1)):
@@ -89,13 +89,13 @@ class GameManager:
         }
 
         came_from = {}
-        open = []
+        open = heap.Heap(key=lambda x: f_score[x])
         closed = set()
 
-        heapq.heappush(open, (f_score[start], start))  # add start to open
+        open.push(start)  # add start to open
 
-        while open:
-            _, current = heapq.heappop(open)
+        while not open.empty():
+            current = open.pop()
             closed.add(current)
 
             if current is goal:
@@ -117,7 +117,7 @@ class GameManager:
                     g_score[n] = tentative
                     f_score[n] = g_score[n] + self.heuristic_cost(n, goal)
                     if n not in open:
-                        heapq.heappush(open, (f_score[n], n))
+                        open.push(n)
         return []
 
     def heuristic_cost(self, start, goal):

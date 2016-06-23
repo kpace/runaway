@@ -1,7 +1,7 @@
 class Cell:
-    def __init__(self, x, y, passable=True, symbol=' '):
-        self.x = x
+    def __init__(self, y, x, passable=True, symbol=' '):
         self.y = y
+        self.x = x
         self.passable = passable
         self.symbol = symbol
 
@@ -11,15 +11,21 @@ class Cell:
     def __lt__(self, other):
         return True
 
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and \
+               self.passable == other.passable and self.symbol == other.symbol
+
+    def __hash__(self):
+        return hash(str(self.x) + str(self.y) + self.symbol)
+
 class Hero(Cell):
-    def __init__(self, x, y, lives=3):
-        super().__init__(x, y, True, 'H')
+    def __init__(self, y, x, lives=3):
+        super().__init__(y, x, True, 'H')
         self.lives = lives
 
-
 class Monster(Cell):
-    def __init__(self, x, y):
-        super().__init__(x, y, False, '$')
+    def __init__(self, y, x):
+        super().__init__(y, x, False, '$')
         self.path = []
 
 
