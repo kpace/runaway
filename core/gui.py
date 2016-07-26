@@ -84,7 +84,7 @@ class Playground(QtWidgets.QFrame):
                     sys.exit()
             self.update_playground()
         else:
-            QtGui.QWidget.timerEvent(event)
+            QtWidgets.QWidget.timerEvent(event)
 
     def start(self):
         self.timer.start(SPEED, self)
