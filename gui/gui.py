@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMessageBox
 from core.map import Map
 from core.game_manager import GameManager
+import config
 
 DIRECTIONS = {
     QtCore.Qt.Key_A: (0, -1),
@@ -11,14 +12,11 @@ DIRECTIONS = {
     QtCore.Qt.Key_S: (1, 0)
 }
 
-SPEED = 200
-CELL_SIZE = 20
-
 
 class CellGui(QtWidgets.QLabel):
     def __init__(self, symbol, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setFixedSize(CELL_SIZE, CELL_SIZE)
+        self.setFixedSize(config.CELL_SIZE, config.CELL_SIZE)
         self.setProperty('symbol', symbol)
 
     def set_style(self, symbol):
@@ -53,7 +51,7 @@ class Playground(QtWidgets.QFrame):
         self.setLayout(self.grid)
         self.draw()
 
-        self.move(300, 150)
+        self.move(config.WINDOW_OFFSET_X, config.WINDOW_OFFSET_Y)
         self.setWindowTitle('Runaway')
         self.show()
 
@@ -87,7 +85,7 @@ class Playground(QtWidgets.QFrame):
             QtWidgets.QWidget.timerEvent(event)
 
     def start(self):
-        self.timer.start(SPEED, self)
+        self.timer.start(config.SPEED, self)
 
 
 def main():
