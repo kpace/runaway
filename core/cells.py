@@ -18,10 +18,12 @@ class Cell:
     def __hash__(self):
         return hash(str(self.x) + str(self.y) + self.symbol)
 
+
 class Hero(Cell):
     def __init__(self, y, x, lives=3):
         super().__init__(y, x, True, 'H')
         self.lives = lives
+
 
 class Monster(Cell):
     def __init__(self, y, x):

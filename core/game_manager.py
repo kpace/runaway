@@ -2,6 +2,7 @@ from cells import Hero, Monster
 import sys
 import heap
 
+
 class GameManager:
     def __init__(self, map, initial_direction=(0, 1)):
         self.game_over = False

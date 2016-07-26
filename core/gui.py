@@ -1,6 +1,6 @@
 import sys
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QMessageBox
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QMessageBox
 from map import Map
 from game_manager import GameManager
 
@@ -14,8 +14,8 @@ DIRECTIONS = {
 SPEED = 200
 CELL_SIZE = 20
 
-class CellGui(QtGui.QLabel):
 
+class CellGui(QtWidgets.QLabel):
     def __init__(self, symbol, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFixedSize(CELL_SIZE, CELL_SIZE)
@@ -37,15 +37,15 @@ class CellGui(QtGui.QLabel):
             """
         )
 
-class Playground(QtGui.QFrame):
 
+class Playground(QtWidgets.QFrame):
     def __init__(self, gm, *args, **kwargs):
         super(Playground, self).__init__(*args, **kwargs)
 
         self.gm = gm
         self.height, self.width = gm.dimensions()
         self.timer = QtCore.QBasicTimer()
-        self.grid = QtGui.QGridLayout()
+        self.grid = QtWidgets.QGridLayout()
         self.grid.setSpacing(0)
         self.init_ui()
 
@@ -89,10 +89,11 @@ class Playground(QtGui.QFrame):
     def start(self):
         self.timer.start(SPEED, self)
 
+
 def main():
     m = Map('../maps/m1.txt')
     gm = GameManager(m, DIRECTIONS[QtCore.Qt.Key_D])
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     playground = Playground(gm)
     playground.start()
 

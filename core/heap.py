@@ -1,5 +1,6 @@
 import heapq
 
+
 class Heap:
     def __init__(self, key=lambda x: x):
         self._data = []
