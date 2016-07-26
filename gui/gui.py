@@ -63,7 +63,7 @@ class Playground(QtWidgets.QFrame):
                 cell = CellGui(self.gm.cell_at((i, j)).symbol)
                 self.grid.addWidget(cell, i, j)
 
-    def update_playground(self):
+    def refresh_cell_style(self):
         for i in range(self.height):
             for j in range(self.width):
                 cell = self.grid.itemAtPosition(i, j).widget()
@@ -82,7 +82,7 @@ class Playground(QtWidgets.QFrame):
             if self.gm.game_over:
                     QMessageBox.information(self, 'Game Over', ':( :( :(')
                     sys.exit()
-            self.update_playground()
+            self.refresh_cell_style()
         else:
             QtWidgets.QWidget.timerEvent(event)
 
