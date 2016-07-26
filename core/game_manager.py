@@ -1,6 +1,6 @@
-from cells import Hero, Monster
+from core.cells import Hero, Monster
 import sys
-import heap
+from core.heap import Heap
 
 
 class GameManager:
@@ -90,7 +90,7 @@ class GameManager:
         }
 
         came_from = {}
-        open = heap.Heap(key=lambda x: f_score[x])
+        open = Heap(key=lambda x: f_score[x])
         closed = set()
 
         open.push(start)  # add start to open

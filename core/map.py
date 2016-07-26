@@ -1,4 +1,4 @@
-from cells import Cell, Hero, Monster
+from core.cells import Cell, Hero, Monster
 
 
 class Map:

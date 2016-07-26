@@ -1,8 +1,8 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMessageBox
-from map import Map
-from game_manager import GameManager
+from core.map import Map
+from core.game_manager import GameManager
 
 DIRECTIONS = {
     QtCore.Qt.Key_A: (0, -1),
