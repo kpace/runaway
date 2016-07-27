@@ -9,7 +9,6 @@ class GameManager:
         self.map = map
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
-        self.hero_position = self.get_hero_position()
         self.direction = initial_direction
 
     def move_cells(self):
@@ -20,18 +19,15 @@ class GameManager:
     def move_cell(self, cell, to):
         if to.passable:
             self.map.swap_cells(cell, to)
+            return True
+        else:
+            return False
 
     def move_hero(self):
-        # TODO: implement get_next_cell
-        to_move_pos = tuple(map(sum, zip(self.hero_position, self.direction)))
+        to_move_pos = tuple(map(sum, zip(self.hero.position, self.direction)))
         to_move_cell = self.map[to_move_pos]
 
-        if to_move_cell and to_move_cell.passable:
-            self.map.swap_cells(self.hero, to_move_cell)
-            self.hero_position = to_move_pos
-            return True
-
-        return False
+        return self.move_cell(self.hero, to_move_cell)
 
     def move_monsters(self):
         for monster in self.monsters:
@@ -57,14 +53,6 @@ class GameManager:
                 x = self.map[(i, j)]
                 if type(x) is Hero:
                     return x
-
-    def get_hero_position(self):
-        # TODO: think about refactoring this
-        for i in range(self.map.height):
-            for j in range(self.map.width):
-                x = self.map[(i, j)]
-                if type(x) is Hero:
-                    return i, j
 
     def get_monsters(self):
         return [self.map[(i, j)] for i in range(self.map.height) for j in
@@ -129,6 +117,6 @@ class GameManager:
         return path[:len(path) - 1]
 
     def set_direction(self, direction):
-        to_move_pos = tuple(map(sum, zip(self.hero_position, direction)))
+        to_move_pos = tuple(map(sum, zip(self.hero.position, direction)))
         if self.map[to_move_pos].passable:
             self.direction = direction

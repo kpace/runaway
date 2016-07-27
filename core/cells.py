@@ -5,6 +5,10 @@ class Cell:
         self.passable = passable
         self.symbol = symbol
 
+    @property
+    def position(self):
+        return self.y, self.x
+
     def __str__(self):
         return self.symbol
 
