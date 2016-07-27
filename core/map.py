@@ -55,12 +55,10 @@ class Map:
         return abs(cell1.y - cell2.y) + abs((cell1.x - cell2.x))
 
     def swap_cells(self, c1, c2):
+        """ Swaps the position on the map of the passed cells """
         c1_pos = c1.y, c1.x
         c2_pos = c2.y, c2.x
-
-        tmp = c1
         self[c1_pos] = c2
-        self[c2_pos] = tmp
-
+        self[c2_pos] = c1
         c1.y, c1.x = c2_pos
         c2.y, c2.x = c1_pos

@@ -39,6 +39,14 @@ class TestMap(unittest.TestCase):
         self.assertEqual(15, map.dist_between(map[(5, 10)], map[0, 0]))
         self.assertEqual(14, map.dist_between(map[(1, 0)], map[5, 10]))
 
+    def test_swap_cells(self):
+        map = Map('../maps/test-map1.txt')
+        c1 = map[(6,2)]
+        c2 = map[(6,3)]
+        map.swap_cells(c1, c2)
+        self.assertEqual(c1, map[(6,3)])
+        self.assertEqual(c2, map[(6,2)])
+
 
 if __name__ == '__main__':
     unittest.main()
