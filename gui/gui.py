@@ -42,7 +42,9 @@ class Playground(QtWidgets.QFrame):
 
         self.gm = gm
         self.height, self.width = gm.dimensions()
-        self.timer = QtCore.QBasicTimer()
+        self.hero_movement_timer = QtCore.QBasicTimer()
+        self.monster_movement_timer = QtCore.QBasicTimer()
+        self.chase_wander_timer = QtCore.QBasicTimer()
         self.grid = QtWidgets.QGridLayout()
         self.grid.setSpacing(0)
         self.init_ui()
@@ -75,17 +77,24 @@ class Playground(QtWidgets.QFrame):
             self.close()
 
     def timerEvent(self, event):
-        if event.timerId() == self.timer.timerId():
-            self.gm.move_cells()
-            if self.gm.game_over:
-                    QMessageBox.information(self, 'Game Over', ':( :( :(')
-                    sys.exit()
+        if event.timerId() == self.hero_movement_timer.timerId():
+            self.gm.move_hero()
             self.refresh_cell_style()
+        elif event.timerId() == self.monster_movement_timer.timerId():
+            self.gm.move_monsters()
+            if self.gm.game_over:
+                QMessageBox.information(self, 'Game Over', ':( :( :(')
+                sys.exit()
+            self.refresh_cell_style()
+        elif event.timerId() == self.chase_wander_timer.timerId():
+            self.gm.toggle_chasing()
         else:
             QtWidgets.QWidget.timerEvent(event)
 
     def start(self):
-        self.timer.start(config.SPEED, self)
+        self.hero_movement_timer.start(config.HERO_MOVEMENT_SPEED, self)
+        self.monster_movement_timer.start(config.MONSTER_MOVEMENT_SPEED, self)
+        self.chase_wander_timer.start(config.CHASE_WANDER_SPEED, self)
 
 
 def main():

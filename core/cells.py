@@ -30,9 +30,8 @@ class Hero(Cell):
 
 
 class Monster(Cell):
-    def __init__(self, y, x):
+    def __init__(self, y, x, chasing=True, direction=(1, 1)):
         super().__init__(y, x, False, '$')
+        self.chasing = chasing
+        self.direction = direction
         self.path = []
-
-
-

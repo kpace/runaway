@@ -1,3 +1,5 @@
+import random
+
 from core.cells import Hero, Monster
 import sys
 from core.heap import Heap
@@ -11,11 +13,6 @@ class GameManager:
         self.monsters = self.get_monsters()
         self.direction = initial_direction
 
-    def move_cells(self):
-        if self.move_hero():
-            self.update_monsters_path()
-        self.move_monsters()
-
     def move_cell(self, cell, to):
         if to.passable:
             self.map.swap_cells(cell, to)
@@ -26,14 +23,29 @@ class GameManager:
     def move_hero(self):
         to_move_pos = tuple(map(sum, zip(self.hero.position, self.direction)))
         to_move_cell = self.map[to_move_pos]
-
-        return self.move_cell(self.hero, to_move_cell)
+        if self.move_cell(self.hero, to_move_cell):
+            self.update_monsters_path()
+            return True
+        else:
+            return False
 
     def move_monsters(self):
         for monster in self.monsters:
+            to_move = None
             # monster.path could be empty, if a_star can't find path
-            if monster.path:
+            if monster.path and monster.chasing:
                 to_move = monster.path.pop()
+            else:
+                to_move = self.map[tuple(map(sum, zip(monster.position, monster.direction)))]
+                if not to_move.passable:
+                    neighbours = list(filter(lambda c: c.passable, self.map.neighbours(monster)))
+                    if neighbours:
+                        to_move = random.choice(neighbours)
+            if to_move:
+                # TODO: implement Position class, it will be easier
+                # TODO: to substract and add positions
+                import operator
+                monster.direction = tuple(map(operator.sub, to_move.position, monster.position))
                 if to_move == self.hero:  # Game Over
                     self.game_over = True
                     return
@@ -120,3 +132,7 @@ class GameManager:
         to_move_pos = tuple(map(sum, zip(self.hero.position, direction)))
         if self.map[to_move_pos].passable:
             self.direction = direction
+
+    def toggle_chasing(self):
+        for monster in self.monsters:
+            monster.chasing = random.choice([True, False])

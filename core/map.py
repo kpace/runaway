@@ -1,3 +1,5 @@
+import random
+
 from core.cells import Cell, Hero, Monster
 
 
@@ -17,7 +19,7 @@ class Map:
                     if ch == 'H':
                         l.append(Hero(i, j))
                     elif ch == '$':
-                        l.append(Monster(i, j))
+                        l.append(Monster(i, j, random.choice([True, False])))
                     else:
                         is_passable = ch in self.PASSABLE
                         l.append(Cell(i, j, is_passable, ch))

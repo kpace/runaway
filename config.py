@@ -1,6 +1,8 @@
 """ This file contains different configuration values of the game """
 
-SPEED = 200
+HERO_MOVEMENT_SPEED = 200
+MONSTER_MOVEMENT_SPEED = 250
+CHASE_WANDER_SPEED = 4000
 CELL_SIZE = 25
 WINDOW_OFFSET_X = 450
 WINDOW_OFFSET_Y = 150
