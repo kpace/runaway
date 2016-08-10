@@ -1,15 +1,17 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMessageBox
+
+from core.cells import Direction
 from core.map import Map
 from core.game_manager import GameManager
 import config
 
 DIRECTIONS = {
-    QtCore.Qt.Key_A: (0, -1),
-    QtCore.Qt.Key_D: (0, 1),
-    QtCore.Qt.Key_W: (-1, 0),
-    QtCore.Qt.Key_S: (1, 0)
+    QtCore.Qt.Key_W: Direction.UP,
+    QtCore.Qt.Key_S: Direction.DOWN,
+    QtCore.Qt.Key_A: Direction.LEFT,
+    QtCore.Qt.Key_D: Direction.RIGHT
 }
 
 
@@ -99,7 +101,7 @@ class Playground(QtWidgets.QFrame):
 
 def main():
     m = Map('../maps/m1.txt')
-    gm = GameManager(m, DIRECTIONS[QtCore.Qt.Key_D])
+    gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)
     playground = Playground(gm)
     playground.start()
