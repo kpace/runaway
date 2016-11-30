@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMessageBox
 
-from core.cells import Direction
+from core.cells import Direction, Position
 from core.map import Map
 from core.game_manager import GameManager
 import config
@@ -62,7 +62,7 @@ class Playground(QtWidgets.QFrame):
     def draw(self):
         for i in range(self.height):
             for j in range(self.width):
-                cell = CellGui(self.gm.cell_at((i, j)).symbol)
+                cell = CellGui(self.gm.cell_at(Position(i, j)).symbol)
                 self.grid.addWidget(cell, i, j)
 
     def refresh_cell_style(self):
@@ -70,7 +70,7 @@ class Playground(QtWidgets.QFrame):
             for j in range(self.width):
                 cell = self.grid.itemAtPosition(i, j).widget()
                 # TODO: Refactor...
-                cell.set_style(self.gm.cell_at((i, j)).symbol)
+                cell.set_style(self.gm.cell_at(Position(i, j)).symbol)
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:

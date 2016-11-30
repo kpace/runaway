@@ -1,12 +1,12 @@
 import random
 
-from core.cells import Hero, Monster
+from core.cells import Hero, Monster, Position
 import sys
 from core.heap import Heap
 
 
 class GameManager:
-    def __init__(self, map, initial_direction=(0, 1)):
+    def __init__(self, map, initial_direction=Position(0, 1)):
         self.game_over = False
         self.map = map
         self.hero = self.get_hero()
@@ -21,7 +21,7 @@ class GameManager:
             return False
 
     def move_hero(self):
-        to_move_pos = tuple(map(sum, zip(self.hero.position, self.direction)))
+        to_move_pos = self.hero.position + self.direction
         to_move_cell = self.map[to_move_pos]
         if self.move_cell(self.hero, to_move_cell):
             self.update_monsters_path()
@@ -36,16 +36,13 @@ class GameManager:
             if monster.path and monster.chasing:
                 to_move = monster.path.pop()
             else:
-                to_move = self.map[tuple(map(sum, zip(monster.position, monster.direction)))]
+                to_move = self.map[monster.position + monster.direction]
                 if not to_move.passable:
                     neighbours = list(filter(lambda c: c.passable, self.map.neighbours(monster)))
                     if neighbours:
                         to_move = random.choice(neighbours)
             if to_move:
-                # TODO: implement Position class, it will be easier
-                # TODO: to substract and add positions
-                import operator
-                monster.direction = tuple(map(operator.sub, to_move.position, monster.position))
+                monster.direction = to_move.position - monster.position
                 if to_move == self.hero:  # Game Over
                     self.game_over = True
                     return
@@ -62,13 +59,13 @@ class GameManager:
         # TODO: think about refactoring this
         for i in range(self.map.height):
             for j in range(self.map.width):
-                x = self.map[(i, j)]
+                x = self.map[Position(i, j)]
                 if type(x) is Hero:
                     return x
 
     def get_monsters(self):
-        return [self.map[(i, j)] for i in range(self.map.height) for j in
-                range(self.map.width) if type(self.map[(i, j)]) is Monster]
+        return [self.map[Position(i, j)] for i in range(self.map.height) for j in
+                range(self.map.width) if type(self.map[Position(i, j)]) is Monster]
 
     def dimensions(self):
         return self.map.height, self.map.width
@@ -129,7 +126,7 @@ class GameManager:
         return path[:len(path) - 1]
 
     def set_direction(self, direction):
-        to_move_pos = tuple(map(sum, zip(self.hero.position, direction)))
+        to_move_pos = self.hero.position + direction
         if self.map[to_move_pos].passable:
             self.direction = direction
 

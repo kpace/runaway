@@ -1,13 +1,8 @@
 class Cell:
-    def __init__(self, y, x, passable=True, symbol=' '):
-        self.y = y
-        self.x = x
+    def __init__(self, pos, passable=True, symbol=' '):
+        self.position = pos
         self.passable = passable
         self.symbol = symbol
-
-    @property
-    def position(self):
-        return self.y, self.x
 
     def __str__(self):
         return self.symbol
@@ -16,29 +11,51 @@ class Cell:
         return True
 
     def __eq__(self, other):
-        return self.x == other.x and self.y == other.y and \
+        return self.position == other.position and \
                self.passable == other.passable and self.symbol == other.symbol
 
     def __hash__(self):
-        return hash(str(self.x) + str(self.y) + self.symbol)
+        return hash(str(self.position.x) + str(self.position.y) + self.symbol)
 
+    @property
+    def x(self):
+        return self.position.x
+
+    @property
+    def y(self):
+        return self.position.y
 
 class Hero(Cell):
-    def __init__(self, y, x, lives=3):
-        super().__init__(y, x, True, 'H')
+    def __init__(self, pos, lives=3):
+        super().__init__(pos, True, 'H')
         self.lives = lives
 
 
 class Monster(Cell):
-    def __init__(self, y, x, chasing=True, direction=(1, 1)):
-        super().__init__(y, x, False, '$')
+    def __init__(self, pos, direction, chasing=True):
+        super().__init__(pos, False, '$')
         self.chasing = chasing
         self.direction = direction
         self.path = []
 
 
+class Position:
+    def __init__(self, y, x):
+        self.y = y
+        self.x = x
+
+    def __eq__(self, other):
+        return self.y == other.y and self.x == other.x
+
+    def __add__(self, other):
+        return Position(self.y + other.y, self.x + other.x)
+
+    def __sub__(self, other):
+        return Position(self.y - other.y, self.x - other.x)
+
+
 class Direction:
-    UP = (-1, 0)
-    DOWN = (1, 0)
-    LEFT = (0, -1)
-    RIGHT = (0, 1)
+    UP = Position(-1, 0)
+    DOWN = Position(1, 0)
+    LEFT = Position(0, -1)
+    RIGHT = Position(0, 1)

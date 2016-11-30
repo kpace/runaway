@@ -1,6 +1,6 @@
 import random
 
-from core.cells import Cell, Hero, Monster
+from core.cells import Cell, Hero, Monster, Position, Direction
 
 
 class Map:
@@ -16,13 +16,14 @@ class Map:
             for line in file:  # can be refactored with list comprehension
                 l = []
                 for j, ch in enumerate(line[:-1]):
+                    pos = Position(i, j)
                     if ch == 'H':
-                        l.append(Hero(i, j))
+                        l.append(Hero(pos))
                     elif ch == '$':
-                        l.append(Monster(i, j, random.choice([True, False])))
+                        l.append(Monster(pos, Direction.UP, random.choice([True, False])))
                     else:
                         is_passable = ch in self.PASSABLE
-                        l.append(Cell(i, j, is_passable, ch))
+                        l.append(Cell(pos, is_passable, ch))
                 self.field.append(l)
                 i += 1
         self.height = len(self.field)
@@ -38,10 +39,10 @@ class Map:
         return s
 
     def __getitem__(self, position):
-        return self.field[position[0]][position[1]]
+        return self.field[position.y][position.x]
 
     def __setitem__(self, position, value):
-        self.field[position[0]][position[1]] = value
+        self.field[position.y][position.x] = value
 
     def neighbours(self, cell):
         # TODO: think about refactoring this
@@ -58,9 +59,9 @@ class Map:
 
     def swap_cells(self, c1, c2):
         """ Swaps the position on the map of the passed cells """
-        c1_pos = c1.y, c1.x
-        c2_pos = c2.y, c2.x
-        self[c1_pos] = c2
-        self[c2_pos] = c1
-        c1.y, c1.x = c2_pos
-        c2.y, c2.x = c1_pos
+        self[c1.position] = c2
+        self[c2.position] = c1
+
+        swap = c1.position
+        c1.position = c2.position
+        c2.position = swap
