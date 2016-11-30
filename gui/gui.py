@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QMessageBox
 from core.cells import Direction, Position
 from core.map import Map
 from core.game_manager import GameManager
+from utils import get_style
+
 import config
 
 DIRECTIONS = {
@@ -20,22 +22,11 @@ class CellGui(QtWidgets.QLabel):
         super().__init__(*args, **kwargs)
         self.setFixedSize(config.CELL_SIZE, config.CELL_SIZE)
         self.setProperty('symbol', symbol)
+        self.style = get_style()
 
     def set_style(self, symbol):
         self.setProperty('symbol', symbol)
-        self.setStyleSheet(
-            """
-            QLabel[symbol='#'] {
-                background-color: blue;
-            }
-            QLabel[symbol='H']{
-                background-color: black;
-            }
-            QLabel[symbol='$']{
-                background-color: red;
-            }
-            """
-        )
+        self.setStyleSheet(self.style)
 
 
 class Playground(QtWidgets.QFrame):

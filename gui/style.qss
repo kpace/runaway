@@ -1,0 +1,11 @@
+QLabel[symbol='#'] {
+    background-color: blue;
+}
+
+QLabel[symbol='H']{
+    background-color: black;
+}
+
+QLabel[symbol='$']{
+    background-color: red;
+}
