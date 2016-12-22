@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file alias='hero.png'>heisenberg.png</file>
+</qresource>
+</RCC>

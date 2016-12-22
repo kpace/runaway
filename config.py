@@ -8,6 +8,8 @@ CELL_SIZE = 25
 WINDOW_OFFSET_X = 450
 WINDOW_OFFSET_Y = 150
 
+BINARY_RESOURCES_PATH = '/resources/resources_rc.py'
+
 PROJECT_ROOT = os.path.dirname(__file__)
 
 # override with config_local configurations

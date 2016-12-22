@@ -8,6 +8,7 @@ from core.game_manager import GameManager
 from utils import get_style
 
 import config
+from resources import resources_rc
 
 DIRECTIONS = {
     QtCore.Qt.Key_W: Direction.UP,
@@ -15,19 +16,6 @@ DIRECTIONS = {
     QtCore.Qt.Key_A: Direction.LEFT,
     QtCore.Qt.Key_D: Direction.RIGHT
 }
-
-
-class CellGui(QtWidgets.QLabel):
-    def __init__(self, symbol, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.setFixedSize(config.CELL_SIZE, config.CELL_SIZE)
-        self.setProperty('symbol', symbol)
-        self.style = get_style()
-
-    def set_style(self, symbol):
-        self.setProperty('symbol', symbol)
-        self.setStyleSheet(self.style)
-
 
 class Playground(QtWidgets.QFrame):
     def __init__(self, gm, *args, **kwargs):
@@ -40,6 +28,7 @@ class Playground(QtWidgets.QFrame):
         self.chase_wander_timer = QtCore.QBasicTimer()
         self.grid = QtWidgets.QGridLayout()
         self.grid.setSpacing(0)
+        self.style = get_style()
         self.init_ui()
 
     def init_ui(self):
@@ -53,15 +42,23 @@ class Playground(QtWidgets.QFrame):
     def draw(self):
         for i in range(self.height):
             for j in range(self.width):
-                cell = CellGui(self.gm.cell_at(Position(i, j)).symbol)
-                self.grid.addWidget(cell, i, j)
+                self.create_cell(self.gm.cell_at(Position(i, j)).symbol, i, j)
 
     def refresh_cell_style(self):
         for i in range(self.height):
             for j in range(self.width):
-                cell = self.grid.itemAtPosition(i, j).widget()
-                # TODO: Refactor...
-                cell.set_style(self.gm.cell_at(Position(i, j)).symbol)
+                cell = self.gm.cell_at(Position(i, j))
+                cell_gui = self.grid.itemAtPosition(i, j).widget()
+                cell_gui.setProperty('symbol', cell.symbol)
+        self.setStyleSheet(self.style)
+
+    def create_cell(self, symbol, i, j):
+        cell = QtWidgets.QToolButton()
+        cell.setAutoFillBackground(True)
+        cell.setAutoRaise(True)
+        cell.setFixedSize(config.CELL_SIZE, config.CELL_SIZE)
+        cell.setProperty('symbol', symbol)
+        self.grid.addWidget(cell, i, j)
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
@@ -91,6 +88,7 @@ class Playground(QtWidgets.QFrame):
 
 
 def main():
+    QtCore.QResource.registerResource(config.BINARY_RESOURCES_PATH)
     m = Map('../maps/m1.txt')
     gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)

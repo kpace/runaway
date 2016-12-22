@@ -1,0 +1,15 @@
+QToolButton {
+    border-radius: 4px;
+}
+
+QToolButton[symbol='#'] {
+    background-color: light-grey;
+}
+
+QToolButton[symbol='H'] {
+    background-image: url(:/hero.png);
+}
+
+QToolButton[symbol='$'] {
+    background-color: red;
+}
