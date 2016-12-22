@@ -22,6 +22,7 @@ class Playground(QtWidgets.QFrame):
         super(Playground, self).__init__(*args, **kwargs)
 
         self.gm = gm
+        self.gm.bind_move(self.refresh_cells)
         self.height, self.width = gm.dimensions()
         self.hero_movement_timer = QtCore.QBasicTimer()
         self.monster_movement_timer = QtCore.QBasicTimer()
@@ -43,14 +44,13 @@ class Playground(QtWidgets.QFrame):
         for i in range(self.height):
             for j in range(self.width):
                 self.create_cell(self.gm.cell_at(Position(i, j)).symbol, i, j)
-
-    def refresh_cell_style(self):
-        for i in range(self.height):
-            for j in range(self.width):
-                cell = self.gm.cell_at(Position(i, j))
-                cell_gui = self.grid.itemAtPosition(i, j).widget()
-                cell_gui.setProperty('symbol', cell.symbol)
         self.setStyleSheet(self.style)
+
+    def refresh_cells(self, cells):
+        for cell in cells:
+            cell_gui = self.grid.itemAtPosition(cell.y, cell.x).widget()
+            cell_gui.setProperty('symbol', cell.symbol)
+            cell_gui.setStyleSheet(self.style)
 
     def create_cell(self, symbol, i, j):
         cell = QtWidgets.QToolButton()
@@ -69,13 +69,11 @@ class Playground(QtWidgets.QFrame):
     def timerEvent(self, event):
         if event.timerId() == self.hero_movement_timer.timerId():
             self.gm.move_hero()
-            self.refresh_cell_style()
         elif event.timerId() == self.monster_movement_timer.timerId():
             self.gm.move_monsters()
             if self.gm.game_over:
                 QMessageBox.information(self, 'Game Over', ':( :( :(')
                 sys.exit()
-            self.refresh_cell_style()
         elif event.timerId() == self.chase_wander_timer.timerId():
             self.gm.toggle_chasing()
         else:

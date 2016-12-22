@@ -12,10 +12,13 @@ class GameManager:
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
         self.direction = initial_direction
+        self.move_callback = None
 
     def move_cell(self, cell, to):
         if to.passable:
             self.map.swap_cells(cell, to)
+            if self.move_callback:
+                self.move_callback([cell, to])
             return True
         else:
             return False
@@ -113,6 +116,9 @@ class GameManager:
                     if n not in open:
                         open.push(n)
         return []
+
+    def bind_move(self, move_callback):
+        self.move_callback = move_callback
 
     def heuristic_cost(self, start, goal):
         return self.map.dist_between(start, goal)
