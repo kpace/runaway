@@ -25,6 +25,7 @@ class Cell:
     def y(self):
         return self.position.y
 
+
 class Hero(Cell):
     def __init__(self, pos, lives=3):
         super().__init__(pos, True, 'H')

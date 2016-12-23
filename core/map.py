@@ -7,11 +7,12 @@ class Map:
     PASSABLE = {' ', '.'}
 
     def __init__(self, file_name):
-        self.__load_map(file_name)
+        self.file_name = file_name
+        self.__load_map()
 
-    def __load_map(self, file_name):
+    def __load_map(self):
         self.field = []
-        with open(file_name) as file:
+        with open(self.file_name) as file:
             i = 0
             for line in file:  # can be refactored with list comprehension
                 l = []
@@ -65,3 +66,6 @@ class Map:
         swap = c1.position
         c1.position = c2.position
         c2.position = swap
+
+    def renew(self):
+        self.__load_map()

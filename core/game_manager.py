@@ -7,12 +7,16 @@ from core.heap import Heap
 
 class GameManager:
     def __init__(self, map, initial_direction=Position(0, 1)):
-        self.game_over = False
         self.map = map
+        self.initial_direction = initial_direction
+        self.move_callback = None
+        self.init()
+
+    def init(self):
+        self.game_over = False
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
-        self.direction = initial_direction
-        self.move_callback = None
+        self.direction = self.initial_direction
 
     def move_cell(self, cell, to):
         if to.passable:
@@ -139,3 +143,7 @@ class GameManager:
     def toggle_chasing(self):
         for monster in self.monsters:
             monster.chasing = random.choice([True, False])
+
+    def restart(self):
+        self.map.renew()
+        self.init()

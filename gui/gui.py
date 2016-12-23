@@ -11,18 +11,19 @@ import config
 from resources import resources_rc
 
 DIRECTIONS = {
-    QtCore.Qt.Key_W: Direction.UP,
-    QtCore.Qt.Key_S: Direction.DOWN,
-    QtCore.Qt.Key_A: Direction.LEFT,
-    QtCore.Qt.Key_D: Direction.RIGHT
+    QtCore.Qt.Key_Up: Direction.UP,
+    QtCore.Qt.Key_Down: Direction.DOWN,
+    QtCore.Qt.Key_Left: Direction.LEFT,
+    QtCore.Qt.Key_Right: Direction.RIGHT
 }
+
 
 class Playground(QtWidgets.QFrame):
     def __init__(self, gm, *args, **kwargs):
         super(Playground, self).__init__(*args, **kwargs)
 
         self.gm = gm
-        self.gm.bind_move(self.refresh_cells)
+        self.gm.bind_move(self.refresh_style)
         self.height, self.width = gm.dimensions()
         self.hero_movement_timer = QtCore.QBasicTimer()
         self.monster_movement_timer = QtCore.QBasicTimer()
@@ -39,6 +40,8 @@ class Playground(QtWidgets.QFrame):
         self.move(config.WINDOW_OFFSET_X, config.WINDOW_OFFSET_Y)
         self.setWindowTitle('Runaway')
         self.show()
+        # set the focus to the frame so arrow keys can work
+        self.setFocus()
 
     def draw(self):
         for i in range(self.height):
@@ -46,11 +49,19 @@ class Playground(QtWidgets.QFrame):
                 self.create_cell(self.gm.cell_at(Position(i, j)).symbol, i, j)
         self.setStyleSheet(self.style)
 
-    def refresh_cells(self, cells):
+    def refresh_style(self, cells):
         for cell in cells:
             cell_gui = self.grid.itemAtPosition(cell.y, cell.x).widget()
             cell_gui.setProperty('symbol', cell.symbol)
             cell_gui.setStyleSheet(self.style)
+
+    def refresh_style_all(self):
+        for i in range(self.height):
+            for j in range(self.width):
+                cell = self.gm.cell_at(Position(i, j))
+                cell_gui = self.grid.itemAtPosition(i, j).widget()
+                cell_gui.setProperty('symbol', cell.symbol)
+        self.setStyleSheet(self.style)
 
     def create_cell(self, symbol, i, j):
         cell = QtWidgets.QToolButton()
@@ -67,22 +78,43 @@ class Playground(QtWidgets.QFrame):
             self.close()
 
     def timerEvent(self, event):
+        # TODO: move this functionality in GameManager
+        # in order to have better decoupling
         if event.timerId() == self.hero_movement_timer.timerId():
             self.gm.move_hero()
         elif event.timerId() == self.monster_movement_timer.timerId():
             self.gm.move_monsters()
             if self.gm.game_over:
-                QMessageBox.information(self, 'Game Over', ':( :( :(')
-                sys.exit()
+                self.game_over()
         elif event.timerId() == self.chase_wander_timer.timerId():
             self.gm.toggle_chasing()
         else:
             QtWidgets.QWidget.timerEvent(event)
 
-    def start(self):
+    def start_timers(self):
         self.hero_movement_timer.start(config.HERO_MOVEMENT_SPEED, self)
         self.monster_movement_timer.start(config.MONSTER_MOVEMENT_SPEED, self)
         self.chase_wander_timer.start(config.CHASE_WANDER_SPEED, self)
+
+    def stop_timers(self):
+        self.hero_movement_timer.stop()
+        self.monster_movement_timer.stop()
+        self.chase_wander_timer.stop()
+
+    def start(self):
+        self.start_timers()
+
+    def game_over(self):
+        self.stop_timers()
+        answer = QMessageBox.question(self, 'Game Over',
+                                      'The game is over. Restart?',
+                                      QMessageBox.Yes, QMessageBox.No)
+        if answer == QMessageBox.Yes:
+            self.gm.restart()
+            self.refresh_style_all()
+            self.start_timers()
+        else:
+            QtWidgets.QApplication.quit()
 
 
 def main():
