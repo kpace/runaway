@@ -18,30 +18,43 @@ DIRECTIONS = {
 }
 
 
+class Runaway(QtWidgets.QMainWindow):
+
+    def __init__(self, gm):
+        # TODO: call constructors identically everywhere
+        super().__init__()
+
+        self.status_bar = self.statusBar()
+        self.playground = Playground(gm, self.status_bar)
+        self.setCentralWidget(self.playground)
+
+        self.move(config.WINDOW_OFFSET_X, config.WINDOW_OFFSET_Y)
+        self.setWindowTitle('Runaway')
+        self.show()
+        self.playground.start()
+        # set the focus to the playground so arrow keys can work
+        self.playground.setFocus()
+
 class Playground(QtWidgets.QFrame):
-    def __init__(self, gm, *args, **kwargs):
+    def __init__(self, gm, status_bar, *args, **kwargs):
         super(Playground, self).__init__(*args, **kwargs)
 
         self.gm = gm
+        self.status_bar = status_bar
         self.gm.bind_move(self.refresh_style)
         self.height, self.width = gm.dimensions()
         self.hero_movement_timer = QtCore.QBasicTimer()
         self.monster_movement_timer = QtCore.QBasicTimer()
         self.chase_wander_timer = QtCore.QBasicTimer()
-        self.grid = QtWidgets.QGridLayout()
-        self.grid.setSpacing(0)
+        self.header = QtWidgets.QGridLayout()
+        self.field = QtWidgets.QGridLayout()
+        self.field.setSpacing(0)
         self.style = get_style()
         self.init_ui()
 
     def init_ui(self):
-        self.setLayout(self.grid)
+        self.setLayout(self.field)
         self.draw()
-
-        self.move(config.WINDOW_OFFSET_X, config.WINDOW_OFFSET_Y)
-        self.setWindowTitle('Runaway')
-        self.show()
-        # set the focus to the frame so arrow keys can work
-        self.setFocus()
 
     def draw(self):
         for i in range(self.height):
@@ -51,7 +64,7 @@ class Playground(QtWidgets.QFrame):
 
     def refresh_style(self, cells):
         for cell in cells:
-            cell_gui = self.grid.itemAtPosition(cell.y, cell.x).widget()
+            cell_gui = self.field.itemAtPosition(cell.y, cell.x).widget()
             cell_gui.setProperty('symbol', cell.symbol)
             cell_gui.setStyleSheet(self.style)
 
@@ -59,7 +72,7 @@ class Playground(QtWidgets.QFrame):
         for i in range(self.height):
             for j in range(self.width):
                 cell = self.gm.cell_at(Position(i, j))
-                cell_gui = self.grid.itemAtPosition(i, j).widget()
+                cell_gui = self.field.itemAtPosition(i, j).widget()
                 cell_gui.setProperty('symbol', cell.symbol)
         self.setStyleSheet(self.style)
 
@@ -69,7 +82,7 @@ class Playground(QtWidgets.QFrame):
         cell.setAutoRaise(True)
         cell.setFixedSize(config.CELL_SIZE, config.CELL_SIZE)
         cell.setProperty('symbol', symbol)
-        self.grid.addWidget(cell, i, j)
+        self.field.addWidget(cell, i, j)
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
@@ -80,6 +93,7 @@ class Playground(QtWidgets.QFrame):
     def timerEvent(self, event):
         # TODO: move this functionality in GameManager
         # in order to have better decoupling
+        self.status_bar.showMessage("Points: " + str(self.gm.points))
         if event.timerId() == self.hero_movement_timer.timerId():
             self.gm.move_hero()
         elif event.timerId() == self.monster_movement_timer.timerId():
@@ -122,8 +136,7 @@ def main():
     m = Map('../maps/m1.txt')
     gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)
-    playground = Playground(gm)
-    playground.start()
+    game = Runaway(gm)
 
     sys.exit(app.exec_())
 

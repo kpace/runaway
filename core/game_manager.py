@@ -9,11 +9,12 @@ class GameManager:
     def __init__(self, map, initial_direction=Position(0, 1)):
         self.map = map
         self.initial_direction = initial_direction
-        self.move_callback = None
         self.init()
 
     def init(self):
+        self.move_callback = None
         self.game_over = False
+        self.points = 0
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
         self.direction = self.initial_direction
@@ -28,6 +29,7 @@ class GameManager:
             return False
 
     def move_hero(self):
+        self.points = self.points + 1  # increase game points
         to_move_pos = self.hero.position + self.direction
         to_move_cell = self.map[to_move_pos]
         if self.move_cell(self.hero, to_move_cell):
