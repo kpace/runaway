@@ -1,7 +1,7 @@
-import random
+import random, sys
 
+import utils
 from core.cells import Hero, Monster, Position
-import sys
 from core.heap import Heap
 
 
@@ -10,11 +10,12 @@ class GameManager:
         self.map = map
         self.initial_direction = initial_direction
         self.init()
+        self.move_callback = None
 
     def init(self):
-        self.move_callback = None
         self.game_over = False
         self.points = 0
+        self.record = utils.get_record()
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
         self.direction = self.initial_direction
@@ -29,7 +30,7 @@ class GameManager:
             return False
 
     def move_hero(self):
-        self.points = self.points + 1  # increase game points
+        self.points += 1  # increase game points
         to_move_pos = self.hero.position + self.direction
         to_move_cell = self.map[to_move_pos]
         if self.move_cell(self.hero, to_move_cell):
@@ -53,7 +54,7 @@ class GameManager:
             if to_move:
                 monster.direction = to_move.position - monster.position
                 if to_move == self.hero:  # Game Over
-                    self.game_over = True
+                    self.handle_game_over()
                     return
                 self.move_cell(monster, to_move)
 
@@ -146,6 +147,12 @@ class GameManager:
         for monster in self.monsters:
             monster.chasing = random.choice([True, False])
 
+    def handle_game_over(self):
+        self.game_over = True
+        if self.points > self.record:
+            utils.save_record(self.points)
+
     def restart(self):
         self.map.renew()
         self.init()
+

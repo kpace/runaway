@@ -35,6 +35,7 @@ class Runaway(QtWidgets.QMainWindow):
         # set the focus to the playground so arrow keys can work
         self.playground.setFocus()
 
+
 class Playground(QtWidgets.QFrame):
     def __init__(self, gm, status_bar, *args, **kwargs):
         super(Playground, self).__init__(*args, **kwargs)
@@ -84,6 +85,9 @@ class Playground(QtWidgets.QFrame):
         cell.setProperty('symbol', symbol)
         self.field.addWidget(cell, i, j)
 
+    def update_status_bar(self):
+        self.status_bar.showMessage("Points: %s  Current record: %s " % (self.gm.points, self.gm.record))
+
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
             self.gm.set_direction(DIRECTIONS.get(event.key()))
@@ -93,11 +97,12 @@ class Playground(QtWidgets.QFrame):
     def timerEvent(self, event):
         # TODO: move this functionality in GameManager
         # in order to have better decoupling
-        self.status_bar.showMessage("Points: " + str(self.gm.points))
+        self.update_status_bar()
         if event.timerId() == self.hero_movement_timer.timerId():
             self.gm.move_hero()
         elif event.timerId() == self.monster_movement_timer.timerId():
             self.gm.move_monsters()
+            # TODO: handle game over with callback or event instead of this check
             if self.gm.game_over:
                 self.game_over()
         elif event.timerId() == self.chase_wander_timer.timerId():

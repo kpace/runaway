@@ -3,3 +3,4 @@ __pycache__/
 config_local.py
 core/__pycache__/
 *.pyc
+game_data.dat
