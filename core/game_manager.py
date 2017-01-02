@@ -18,7 +18,7 @@ class GameManager:
         self.record = utils.get_record()
         self.hero = self.get_hero()
         self.monsters = self.get_monsters()
-        self.direction = self.initial_direction
+        self.direction = self.direction_try = self.initial_direction
 
     def move_cell(self, cell, to):
         if to.passable:
@@ -31,9 +31,13 @@ class GameManager:
 
     def move_hero(self):
         self.points += 1  # increase game points
-        to_move_pos = self.hero.position + self.direction
-        to_move_cell = self.map[to_move_pos]
-        if self.move_cell(self.hero, to_move_cell):
+        to_move = self.map[self.hero.position + self.direction]
+        to_move_try = self.map[self.hero.position + self.direction_try]
+        if self.move_cell(self.hero, to_move_try):
+            self.update_monsters_path()
+            self.direction = self.direction_try
+            return True
+        elif self.move_cell(self.hero, to_move):
             self.update_monsters_path()
             return True
         else:
@@ -141,7 +145,14 @@ class GameManager:
     def set_direction(self, direction):
         to_move_pos = self.hero.position + direction
         if self.map[to_move_pos].passable:
-            self.direction = direction
+           self.direction = self.direction_try = direction
+        else:
+            # direction_try holds attempt to change the direction
+            # when this is not possible.
+            # For example when the user clicks little earlier in order to
+            # turn. This direction is then used when the turn is possible,
+            # this way the user won't skip the turn.
+            self.direction_try = direction
 
     def toggle_chasing(self):
         for monster in self.monsters:
