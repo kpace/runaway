@@ -1,6 +1,6 @@
 .idea/
-__pycache__/
-config_local.py
-core/__pycache__/
+/__pycache__/
 *.pyc
+*.swp
+config_local.py
 game_data.dat
