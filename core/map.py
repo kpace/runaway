@@ -49,7 +49,6 @@ class Map:
         self.field[position.y][position.x] = value
 
     def neighbours(self, cell):
-        # TODO: think about refactoring this
         neighbours = []
         neighbours.append(self.field[cell.y - 1][cell.x])
         neighbours.append(self.field[cell.y][cell.x + 1])

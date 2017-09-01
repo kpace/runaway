@@ -72,7 +72,6 @@ class GameManager:
             monster.path = self.a_star(monster, self.hero)
 
     def get_hero(self):
-        # TODO: think about refactoring this
         for i in range(self.map.height):
             for j in range(self.map.width):
                 x = self.map[Position(i, j)]
@@ -116,7 +115,6 @@ class GameManager:
             for n in self.map.neighbours(current):
                 # if current is not passable but is Monster
                 # find path through it, because it will move in the future
-                # TODO: Think about better implementation
                 if (not n.passable and type(n) != Monster) or n in closed:
                     continue
 

@@ -22,7 +22,6 @@ DIRECTIONS = {
 class Runaway(QtWidgets.QMainWindow):
 
     def __init__(self, gm):
-        # TODO: call constructors identically everywhere
         super().__init__()
 
         self.status_bar = self.statusBar()
@@ -98,15 +97,11 @@ class Playground(QtWidgets.QFrame):
             self.close()
 
     def timerEvent(self, event):
-        # TODO: move this functionality in GameManager
-        # in order to have better decoupling
         self.update_status_bar()
         if event.timerId() == self.hero_movement_timer.timerId():
             self.gm.move_hero()
         elif event.timerId() == self.monster_movement_timer.timerId():
             self.gm.move_monsters()
-            # TODO: handle game over with callback
-            # or event instead of this check
             if self.gm.game_over:
                 self.game_over()
         elif event.timerId() == self.chase_wander_timer.timerId():
