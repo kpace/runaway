@@ -21,7 +21,10 @@ class Map:
                     if ch == 'H':
                         l.append(Hero(pos))
                     elif ch == '$':
-                        l.append(Monster(pos, Direction.UP, random.choice([True, False])))
+                        l.append(Monster(
+                            pos,
+                            Direction.UP,
+                            random.choice([True, False])))
                     else:
                         is_passable = ch in self.PASSABLE
                         l.append(Cell(pos, is_passable, ch))

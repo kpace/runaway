@@ -53,7 +53,8 @@ class GameManager:
             else:
                 to_move = self.map[monster.position + monster.direction]
                 if not to_move.passable:
-                    neighbours = list(filter(lambda c: c.passable, self.map.neighbours(monster)))
+                    neighbours = [c for c in self.map.neighbours(monster)
+                                  if c.passable]
                     if neighbours:
                         to_move = random.choice(neighbours)
             if to_move:
@@ -79,8 +80,10 @@ class GameManager:
                     return x
 
     def get_monsters(self):
-        return [self.map[Position(i, j)] for i in range(self.map.height) for j in
-                range(self.map.width) if type(self.map[Position(i, j)]) is Monster]
+        return [self.map[Position(i, j)]
+                for i in range(self.map.height)
+                for j in range(self.map.width)
+                if type(self.map[Position(i, j)]) is Monster]
 
     def dimensions(self):
         return self.map.height, self.map.width
@@ -117,13 +120,13 @@ class GameManager:
                 if (not n.passable and type(n) != Monster) or n in closed:
                     continue
 
-                tentative = g_score[current] + self.map.dist_between(current, n)
+                tent = g_score[current] + self.map.dist_between(current, n)
 
                 if n not in open \
-                        or tentative < g_score.get(n, sys.maxsize):
+                        or tent < g_score.get(n, sys.maxsize):
 
                     came_from[n] = current
-                    g_score[n] = tentative
+                    g_score[n] = tent
                     f_score[n] = g_score[n] + self.heuristic_cost(n, goal)
                     if n not in open:
                         open.push(n)
@@ -146,7 +149,7 @@ class GameManager:
     def set_direction(self, direction):
         to_move_pos = self.hero.position + direction
         if self.map[to_move_pos].passable:
-           self.direction = self.direction_try = direction
+            self.direction = self.direction_try = direction
         else:
             # direction_try holds attempt to change the direction
             # when this is not possible.
@@ -167,4 +170,3 @@ class GameManager:
     def restart(self):
         self.map.renew()
         self.init()
-

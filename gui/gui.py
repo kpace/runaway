@@ -7,8 +7,9 @@ from core.map import Map
 from core.game_manager import GameManager
 from utils import get_style
 
+from gui.resources import resources_rc  # noqa: F401
+
 import config
-from gui.resources import resources_rc
 
 DIRECTIONS = {
     QtCore.Qt.Key_Up: Direction.UP,
@@ -86,7 +87,9 @@ class Playground(QtWidgets.QFrame):
         self.field.addWidget(cell, i, j)
 
     def update_status_bar(self):
-        self.status_bar.showMessage("Points: %s  Current record: %s " % (self.gm.points, self.gm.record))
+        self.status_bar.showMessage(
+                "Points: %s  Current record: %s "
+                % (self.gm.points, self.gm.record))
 
     def keyPressEvent(self, event):
         if event.key() in DIRECTIONS:
@@ -102,7 +105,8 @@ class Playground(QtWidgets.QFrame):
             self.gm.move_hero()
         elif event.timerId() == self.monster_movement_timer.timerId():
             self.gm.move_monsters()
-            # TODO: handle game over with callback or event instead of this check
+            # TODO: handle game over with callback
+            # or event instead of this check
             if self.gm.game_over:
                 self.game_over()
         elif event.timerId() == self.chase_wander_timer.timerId():
@@ -141,10 +145,6 @@ def start_game():
     m = Map('maps/m1.txt')
     gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)
-    game = Runaway(gm)
+    Runaway(gm)
 
     sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
