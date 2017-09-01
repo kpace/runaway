@@ -8,7 +8,7 @@ from core.game_manager import GameManager
 from utils import get_style
 
 import config
-from resources import resources_rc
+from gui.resources import resources_rc
 
 DIRECTIONS = {
     QtCore.Qt.Key_Up: Direction.UP,
@@ -136,9 +136,9 @@ class Playground(QtWidgets.QFrame):
             QtWidgets.QApplication.quit()
 
 
-def main():
+def start_game():
     QtCore.QResource.registerResource(config.BINARY_RESOURCES_PATH)
-    m = Map('../maps/m1.txt')
+    m = Map('maps/m1.txt')
     gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)
     game = Runaway(gm)

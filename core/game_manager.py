@@ -1,6 +1,7 @@
-import random, sys
-
+import random
+import sys
 import utils
+
 from core.cells import Hero, Monster, Position
 from core.heap import Heap
 
