@@ -1,5 +1,5 @@
 import unittest
-from core.cells import  Position
+from core.cells import Position
 
 
 class TestPosition(unittest.TestCase):
@@ -20,6 +20,3 @@ class TestPosition(unittest.TestCase):
         p2 = Position(4, 1)
         p3 = p1 - p2
         self.assertEqual(p3, Position(7, 1))
-
-if __name__ == '__main__':
-    unittest.main()
