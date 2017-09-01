@@ -145,6 +145,10 @@ def start_game():
     m = Map('maps/m1.txt')
     gm = GameManager(m, Direction.RIGHT)
     app = QtWidgets.QApplication(sys.argv)
-    Runaway(gm)
+    runaway = Runaway(gm)
 
-    sys.exit(app.exec_())
+    rc = app.exec_()
+    del runaway
+    del app
+
+    sys.exit(rc)
